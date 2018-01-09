@@ -1,0 +1,62 @@
+
+local AlertOKWithNode = class("AlertOKWithNode", function()
+    return display.newNode()
+end)
+
+function AlertOKWithNode:ctor(options)
+    local title = options.title or "温馨提示"
+    local descNode = options.descNode or display.newNode()
+    local okText = options.ok or "确 定"
+    local okCallback = options.okCallback or nil
+
+    local bg = cc.ui.UIPushButton.new("image/white_unit.png")
+        :setButtonSize(display.width, display.height)
+        :align(display.CENTER, 0, 0)
+        :addTo(self,-1)
+    bg:setColor(cc.c3b(0, 0, 0))
+    bg:setOpacity(150)
+
+    -- desc
+    descNode:align(display.CENTER, 0, 16)
+        :addTo(self,2)
+
+    -- 框
+    self._alertBG = display.newSprite("image/com_form_tips.png")
+        :align(display.CENTER, 0, 0)
+        :addTo(self)
+
+    -- title
+        cc.ui.UILabel.new({
+            text = title, 
+            size = 30,
+            color = cc.c3b(10, 85, 80),
+            align = cc.ui.TEXT_ALIGN_CENTER})
+        :align(display.CENTER, 0, 142)
+        :addTo(self)     
+
+    -- ok button
+    cc.ui.UIPushButton.new("image/com_button_yellow.png")
+        :onButtonClicked(function() 
+            if okCallback then
+                okCallback()
+            end
+            self:actionExit()
+        end)
+        :align(display.CENTER, 0, -115)
+        :addTo(self)
+
+    local okLabel = cc.ui.UILabel.new({text = okText, size = 30,
+        color = cc.c3b(138, 80, 45)})
+        :align(display.CENTER, 0, -115)
+        :addTo(self)
+end
+
+function AlertOKWithNode:actionEnter()
+end
+
+function AlertOKWithNode:actionExit()
+    self:removeSelf()
+end
+
+
+return AlertOKWithNode
