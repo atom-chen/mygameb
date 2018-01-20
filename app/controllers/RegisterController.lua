@@ -27,7 +27,13 @@ function RegiseterController:ctor()
     -- local refreshDate = localDataManager:getStringForKey(GameConfig.LocalData_WEI_XIN_REFRESH_TIME)
 
     if device.platform == "mac" then
-
+        self:runAction(cca.seq({
+                cca.delay(0.1),
+                cca.cb(function()
+                        -- APP:enterScene("GameScene")
+                        APP:enterScene("AddPuzzleGameScene")
+                    end),
+            }))
     elseif device.platform == "ios" then
         self:showWaiting()
         z.IOSManager:getInstance():GameCenterLogin();

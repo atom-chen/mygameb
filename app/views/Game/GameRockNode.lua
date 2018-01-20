@@ -1,5 +1,6 @@
 local GameConfig = require("app.core.GameConfig")
-local GameMapConfig = require("app.core.GameMapConfig")
+local GameMapConfig = require("app.core.Game.GameMapConfig")
+local GameUtils = require("app.core.GameUtils")
 
 local GameRockNode = class("GameRockNode", function()
     return display.newNode()
@@ -57,7 +58,7 @@ function GameRockNode:ctor(len, color, xid, yid)
 				borderColor = GameMapConfig.ROCK_COLOR_BORDER, 
 				borderWidth = 1
 			})
-			:addTo(self._rockSpTouch, _Zorder_Rock)
+			:addTo(self._rockSpTouch, 255)
 	end
 
 	display.newScale9Sprite("image/game/rock_"..self._color..".png", 0, 0, 
@@ -329,12 +330,13 @@ end
 function GameRockNode:showGetScore()
     local params = 
     {
-        type = GameMapConfig._TOOLS_LABEL_TYPE[4],
-        num = "+"..tostring(self._score),
+        type = GameConfig._TOOLS_LABEL_TYPE[4],
+        text = "+"..tostring(self._score),
+        -- num = self._score,
         size = 50,
         isEnglishType = true,
-        color = GameMapConfig._COLOR["Snow"], 
-        borderColor = GameMapConfig._COLOR["Purple1"], 
+        color = GameConfig._COLOR["Snow"], 
+        borderColor = GameConfig._COLOR["Purple1"], 
         bordWidth = 2,
         shadowWidth = 4,
         fontPath = "effect/BRITANIC.TTF"

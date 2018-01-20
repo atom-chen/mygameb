@@ -1,5 +1,4 @@
 local GameConfig = require("app.core.GameConfig")
-local GameMapConfig = require("app.core.GameMapConfig")
 
 local GameUINode = class("GameUINode", function()
     return display.newNode()

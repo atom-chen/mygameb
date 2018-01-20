@@ -24,6 +24,7 @@ function StartCommand.execute(...)
     UID = "0"
     M_DEBUG = false
     M2_DEBUG = false
+    GameAddPuzzle_DEBUG = true
 
     NO_LESS_THAN_4_HEIGHT = math.max(display.height, 1125)
 

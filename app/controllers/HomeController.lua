@@ -9,7 +9,6 @@ local scheduler = require("framework.scheduler")
 local HomeController = class("HomeController", ControllerBase)
 local GlobalStatus = APP:getObject("GlobalStatus")
 local utils = require("app.common.utils")
-local GameMapConfig = require("app.core.GameMapConfig")
 local protocols = require("app.protocol.init")
 
 function HomeController:ctor()

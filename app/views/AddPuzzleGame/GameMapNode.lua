@@ -1,12 +1,12 @@
 local GameConfig = require("app.core.GameConfig")
-local GameMapConfig = require("app.core.GameMapConfig")
+local GameMapConfig = require("app.core.Game.AddPuzzleGameConfig")
 
 local GameMapNode = class("GameMapNode", function()
     return display.newNode()
 end)
 
 function GameMapNode:ctor(mapCfg)
-	self._GameController = APP:getObject("GameController")
+	self._GameController = APP:getObject("AddPuzzleGameController")
 
 	
 
@@ -34,22 +34,24 @@ function GameMapNode:ctor(mapCfg)
 						:align(display.BOTTOM_LEFT, _x, _y)
 						:opacity(0)
 						:addTo(self,1)
-			-- temp:setColor(cc.c4f(1,0,0,1))
 
 			-- set xy
 			local _id = (_yRock-1)*GameMapConfig.ROCK_X+_xRock
 
-			if M_DEBUG then
-				cc.ui.UILabel.new({
-		            text = tostring(_id),
-		            size = 24,
-		            color = cc.c3b(244, 244, 244),
-		            align = cc.ui.TEXT_ALIGN_CENTER,
-		            valign = cc.ui.TEXT_VALIGN_CENTER,
-		        })
-		        :align(display.CENTER, _x, _y)
-		        :addTo(self,2)
-	        end
+			if GameAddPuzzle_DEBUG then
+				local tempB = cc.ui.UILabel.new({
+						text = tostring(_id),
+						size = 24,
+						color = cc.c3b(244, 244, 244),
+						align = cc.ui.TEXT_ALIGN_CENTER,
+						valign = cc.ui.TEXT_VALIGN_CENTER,
+					})
+					:align(display.CENTER, _x, _y)
+					:addTo(self,2)
+				temp:setColor(GameConfig._COLOR["Snow"])
+				temp:setOpacity(30)
+				tempB:setOpacity(30)
+			end
 
 			table.insert(self._GameController._MAP_XY, {x=_x, y=_y})
 

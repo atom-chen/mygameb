@@ -9,7 +9,7 @@ local scheduler = require("framework.scheduler")
 local GameController = class("GameController", ControllerBase)
 local GlobalStatus = APP:getObject("GlobalStatus")
 local utils = require("app.common.utils")
-local GameMapConfig = require("app.core.GameMapConfig")
+local GameMapConfig = require("app.core.Game.GameMapConfig")
 local GameOneFSM = require("app.gamelogic.GameOneFSM")
 local GameRocksLogic = require("app.gamelogic.GameRocksLogic")
 
@@ -32,16 +32,16 @@ function GameController:ctor()
     self._checkRock = nil
     self._nextRocks = {}
     
-    self._bgView = APP:createView("GameBgNode")
+    self._bgView = APP:createView("Game.GameBgNode")
         :addTo(self, GameMapConfig._GameBgNode_Zorder)
 
-    self._mapView = APP:createView("GameMapNode")
+    self._mapView = APP:createView("Game.GameMapNode")
         :addTo(self, GameMapConfig._GameMapNode_Zorder)
 
-    self._nextView = APP:createView("GameNextNode")
+    self._nextView = APP:createView("Game.GameNextNode")
     	:addTo(self, GameMapConfig._GameNextNode_Zorder)
 
-    self._uiView = APP:createView("GameUINode")
+    self._uiView = APP:createView("Game.GameUINode")
     	:addTo(self, GameMapConfig._GameUINode_Zorder)
 
     self._fsm = GameOneFSM.new()
@@ -106,7 +106,7 @@ function GameController:autoCreateRocks(lineNum, isFirst)
 							if lineNum == -1 then
 								self._nextView:addRocks(v.len, _sid)
 							else
-								APP:createView("GameRockNode", v.len, v.color, _sid, lineNum)
+								APP:createView("Game.GameRockNode", v.len, v.color, _sid, lineNum)
 									:addTo(self, GameMapConfig._GameRockNode_Zorder)
 							end
 						end
@@ -244,7 +244,7 @@ function GameController:gotoUp(times)
 						local _sid = 1
 						for _,v in ipairs(self._nextRocks) do
 							if v.color > 0 then
-								APP:createView("GameRockNode", v.len, v.color, _sid, 1)
+								APP:createView("Game.GameRockNode", v.len, v.color, _sid, 1)
 									:addTo(self, GameMapConfig._GameRockNode_Zorder)
 							end
 							_sid = _sid+v.len

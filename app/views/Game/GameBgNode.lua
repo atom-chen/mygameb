@@ -1,5 +1,4 @@
 local GameConfig = require("app.core.GameConfig")
-local GameMapConfig = require("app.core.GameMapConfig")
 
 local GameBgNode = class("GameBgNode", function()
 	return display.newNode()
@@ -61,12 +60,12 @@ function GameBgNode:initBg()
 
 	local params = 
     {
-        type = GameMapConfig._TOOLS_LABEL_TYPE[2],
+        type = GameConfig._TOOLS_LABEL_TYPE[2],
         num = 0,
         size = 54,
         isEnglishType = true,
-        color = GameMapConfig._COLOR["Snow"], 
-        borderColor = GameMapConfig._COLOR["Purple1"], 
+        color = GameConfig._COLOR["Snow"], 
+        borderColor = GameConfig._COLOR["Purple1"], 
         bordWidth = 2,
         shadowWidth = 4,
         fontPath = "effect/BRITANIC.TTF"

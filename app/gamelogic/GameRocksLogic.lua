@@ -4,7 +4,7 @@
 --
 local utils = require("app.common.utils")
 local GameUtils = require("app.core.GameUtils")
-local GameMapConfig = require("app.core.GameMapConfig")
+local GameMapConfig = require("app.core.Game.GameMapConfig")
 
 local GameRocksLogic = {}
 

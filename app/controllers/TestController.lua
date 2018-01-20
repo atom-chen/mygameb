@@ -10,7 +10,7 @@ local scheduler = require("framework.scheduler")
 local TestController = class("TestController", ControllerBase)
 local GlobalStatus = APP:getObject("GlobalStatus")
 local utils = require("app.common.utils")
-local GameMapConfig = require("app.core.GameMapConfig")
+local GameMapConfig = require("app.core.Game.GameMapConfig")
 
 function TestController:ctor()
 	TestController.super.ctor(self)
@@ -54,12 +54,12 @@ function TestController:ctor()
 
         local params = 
         {
-            type = GameMapConfig._TOOLS_LABEL_TYPE[i+1],
+            type = GameConfig._TOOLS_LABEL_TYPE[i+1],
             num = 0*math.pow(10, i),
             size = 88,
             isEnglishType = true,
-            color = GameMapConfig._COLOR["Snow"], 
-            borderColor = GameMapConfig._COLOR["Purple1"], 
+            color = GameConfig._COLOR["Snow"], 
+            borderColor = GameConfig._COLOR["Purple1"], 
             bordWidth = 3,
             shadowWidth = 4,
             fontPath = "effect/BRITANIC.TTF"

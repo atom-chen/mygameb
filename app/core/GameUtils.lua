@@ -530,11 +530,11 @@ end
 --------------------------------------
 -- 
 function GameUtils.onePopAndRaiseOutNode(node)
-    local _xyCcp = node:getPosition()
+    local _xyCcpX, _xyCcpY = node:getPosition()
     node:setScale(0)
     node:runAction(cca.seq({
             cca.scaleTo(0.1, 1),
-            cca.moveTo(10, _xyCcp.x, _xyCcp.y+200),
+            cca.moveTo(10, _xyCcpX, _xyCcpY+200),
         }))
     node:runAction(cca.seq({
             cca.delay(0.5),
