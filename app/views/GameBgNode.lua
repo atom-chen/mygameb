@@ -59,10 +59,21 @@ function GameBgNode:initBg()
 						:addTo(self, 110) 
 
 
-	self._scoreLabel = cc.ui.UILabel.new(
-        {UILabelType = 2,text = "888,888,888",size = 54,font = "effect/BRITANIC.TTF"})
-        :align(display.CENTER,_bgNode_11:getContentSize().width/2, _bgNode_11:getContentSize().height/2)
-        :addTo(_bgNode_11, 2)
+	local params = 
+    {
+        type = GameMapConfig._TOOLS_LABEL_TYPE[2],
+        num = 0,
+        size = 54,
+        isEnglishType = true,
+        color = GameMapConfig._COLOR["Snow"], 
+        borderColor = GameMapConfig._COLOR["Purple1"], 
+        bordWidth = 2,
+        shadowWidth = 4,
+        fontPath = "effect/BRITANIC.TTF"
+    }
+    self._scoreLabel = APP:createView("ToolsNumLabelNode",params)
+						:align(display.CENTER,_bgNode_11:getContentSize().width/2, _bgNode_11:getContentSize().height/2)
+						:addTo(_bgNode_11, 2)
 end
 
 
@@ -86,6 +97,9 @@ function GameBgNode:onCollision(dt)
 end
 
 
+function GameBgNode:setScore(score)
+	self._scoreLabel:updateNum(score)
+end
 
 
 

@@ -14,17 +14,24 @@ local RegiseterController = class("RegiseterController", ControllerBase)
 
 function RegiseterController:ctor()
 	RegiseterController.super.ctor(self)
-    print("--------------w ", display.width)
-    print("--------------h ", display.height)
+    -- print("--------------w ", display.width)
+    -- print("--------------h ", display.height)
 
-    local GlobalStatus = APP:getObject("GlobalStatus")
-    local localDataManager = z.LocalDataManager:getInstance()
+    -- local GlobalStatus = APP:getObject("GlobalStatus")
+    -- local localDataManager = z.LocalDataManager:getInstance()
 
-    local account = localDataManager:getStringForKey(GameConfig.LocalData_Account)
-    local password = localDataManager:getStringForKey(GameConfig.LocalData_Password)
-    local user_type = localDataManager:getIntegerForKey(GameConfig.LocalData_UserType)
-    local refreshToken = localDataManager:getStringForKey(GameConfig.LocalData_WEI_XIN_REFRESH_TOKEN)
-    local refreshDate = localDataManager:getStringForKey(GameConfig.LocalData_WEI_XIN_REFRESH_TIME)
+    -- local account = localDataManager:getStringForKey(GameConfig.LocalData_Account)
+    -- local password = localDataManager:getStringForKey(GameConfig.LocalData_Password)
+    -- local user_type = localDataManager:getIntegerForKey(GameConfig.LocalData_UserType)
+    -- local refreshToken = localDataManager:getStringForKey(GameConfig.LocalData_WEI_XIN_REFRESH_TOKEN)
+    -- local refreshDate = localDataManager:getStringForKey(GameConfig.LocalData_WEI_XIN_REFRESH_TIME)
+
+    if device.platform == "mac" then
+
+    elseif device.platform == "ios" then
+        self:showWaiting()
+        z.IOSManager:getInstance():GameCenterLogin();
+    end
 
 --[[--
 ------------------------------------------------------------------------------------------------

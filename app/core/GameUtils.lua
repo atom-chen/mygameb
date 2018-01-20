@@ -168,128 +168,6 @@ function GameUtils.vibrate()
     end
 end
 
-function GameUtils.playCoinAnim(playEffect)
-    if playEffect == nil or playEffect then
-        GameUtils.playSound("audio/coins.mp3")
-        GameUtils.playSound("audio/win.mp3")
-    end
-    local currentController = APP:getCurrentController()
-
-    currentController:runAction(cca.seq({
-        cca.cb(function() GameUtils._playCoinAnim() end),
-        cca.delay(0.65),
-        cca.cb(function() GameUtils._playCoinAnim() end),
-        cca.delay(0.65),
-        cca.cb(function() GameUtils._playCoinAnim() end),
-        cca.delay(0.65),
-        cca.cb(function() GameUtils._playCoinAnim() end),
-        }))
-
-end
-
-function GameUtils._playCoinAnim()
-    math.randomseed(socket.gettime())
-
-    local currentController = APP:getCurrentController()
-
-    local maxNumPerLine = 30
-    for i = 1, maxNumPerLine do
-        local moveSide = math.random(1, 6)
-        local rotation = math.random(0, 180)
-        local myrand = math.random(1, 20)
-        local x = display.width / (maxNumPerLine + 2) * i
-        local targetX = 0
-        if moveSide % 2 == 0 then
-            targetX = -math.random(1, 200)
-        else
-            targetX = math.random(1, 200)
-        end
-
-        local baseScale = 0.6
-        local coinNode = display.newNode()
-            :scale(baseScale)
-            :rotation(rotation)
-            :pos(x, display.height + 60)
-            :zorder(GameConfig.Top_Z)
-            :addTo(currentController)
-
-        local anim1 = z.FrameAnimUtil:createAnim("cm-color", 12, -1)
-        anim1:addTo(coinNode)
-
-        local anim2 = z.FrameAnimUtil:createAnim("cm-glow", 12, -1)
-        anim2:addTo(coinNode)
-
-        local anim = z.FrameAnimUtil:createAnim("cm-specular", 12, -1)
-        anim:addTo(coinNode)
-
-        if i % 5 == 0 then
-            anim1:setColor(cc.c3b(126, 0, 255))
-            anim2:setColor(cc.c3b(255, 52, 229))
-        elseif i % 5 == 1 then
-            anim1:setColor(cc.c3b(230, 44, 19))
-            anim2:setColor(cc.c3b(255, 106, 54))
-        elseif i % 5 == 2 then
-            anim1:setColor(cc.c3b(7, 129, 235))
-            anim2:setColor(cc.c3b(68, 204, 255))
-        elseif i % 5 == 3 then
-            anim1:setColor(cc.c3b(26, 226, 125))
-            anim2:setColor(cc.c3b(52, 237, 190))
-        elseif i % 5 == 4 then
-            anim1:setColor(cc.c3b(249, 147, 25))
-            anim2:setColor(cc.c3b(255, 222, 0))
-        end
-
-        coinNode:runAction(cca.seq({
-            cca.delay(myrand / 10),
-            cca.spawn({
-                cca.sineIn(cca.moveBy(1.6, targetX, - display.height - 100)),
-                -- cca.scaleTo(0.5, baseScale + (myrand - 10) / 30)
-                }),
-            cca.removeSelf()
-        }))
-    end
-end
-
--- 1: ios no-sse
--- 2: ios sse
--- 3: android
-function GameUtils.getBallDataIndex(hardwareName)
-    local index = 1
-    local hnSplit = utils.stringSplit(hardwareName, " ")
-    -- printInfo(">>>>>>>>>>>>> %s", hardwareName)
-    if hardwareName == "" then
-        return 3
-    end
-
-    -- for _, s in ipairs(hnSplit) do
-    --     printInfo("     >>>> %s", s)
-    -- end
-
-    if hnSplit[1] == "android" then
-        index = 3
-    else
-        if hnSplit[1] == "iPhone" then
-            if hnSplit[2] == "1G" or hnSplit[2] == "3G" or hnSplit[2] == "3GS" or
-                hnSplit[2] == "4" or hnSplit[2] == "4S" then
-                index = 1
-            else
-                index = 2
-            end
-
-        elseif hnSplit[1] == "iPodTouch" then
-            index = 1
-
-        elseif hnSplit[1] == "iPad" then
-            index = 1
-
-        elseif hnSplit[1] == "Simulator" then
-            index = 2
-        end
-    end
-    printInfo("######################## ball index: %d", index)
-    return index
-end
-
 function GameUtils.ScriptBridge_playEffect(filename)
     GameUtils.playSound(filename)
 end
@@ -372,24 +250,6 @@ function GameUtils.getRecordVolume()
     return z.AudioRecorder:getInstance():getVolume()
 end
 
-function GameUtils.getPtNumStr(num)
-    local out = ""
-    local strNum = tostring(num)
-    local len = string.len(strNum)
-    if len >= 4 and len <= 6 then
-        out = string.sub(strNum, 1, -4)..","..string.sub(strNum, len-2)
-    elseif len >= 7 and len <= 9 then
-        out = string.sub(strNum, 1, -7)..","..string.sub(strNum, len-5, -4)..","..string.sub(strNum, len-2)
-    elseif len >= 10 and len <= 12 then
-        out = string.sub(strNum, 1, -10)..","..string.sub(strNum, len-8, -7)..","..string.sub(strNum, len-5, -4)..","..string.sub(strNum, len-2)
-    elseif len >= 13 and len <= 15 then
-        out = string.sub(strNum, 1, -13)..","..string.sub(strNum, len-11, -10)..","..string.sub(strNum, len-8, -7)..","..string.sub(strNum, len-5, -4)..","..string.sub(strNum, len-2)
-    else
-        out = strNum
-    end
-    return out
-end
-
 function GameUtils.getAvatarImage(avatar)
     if avatar == "" then avatar = "1" end
     return string.format("image/%s.png", avatar)
@@ -449,76 +309,6 @@ function GameUtils.getAvatar(avatar, size)
     end
 end
 
-function GameUtils.sendShareNew(stype,title,description,url,imagePath)
-    APP:getCurrentController():showWaiting()
-    APP:getCurrentController():runAction(cca.seq({cca.delay(0.1),cca.cb(function()
-        local user = APP:getObject("User")
-        url = url or "https://a.mlinks.cc/AKMV?user_id="..user.user_id
-        title = title or "乐道溧阳3缺1"
-        description = description or "第一款溧阳人自己的苹果&安卓手游！地道的溧阳规则麻将，地道的溧阳美女配音！"
-        imagePath = imagePath or  "res/image/s7_120.png"
-        local callbackLua = function(code) 
-            if code == "no" then
-                APP:getCurrentController():hideWaiting()
-                APP:getCurrentController():showAlertOK({desc = "你没有安装微信，请安装微信使用这个功能"})
-            else
-                APP:getCurrentController():hideWaiting()
-            end
-        end 
-        if device.platform == "android" then
-            local className="com/jiyan/liyang/Weixin" --包名/类名 
-            local args = {stype,url,title,description,imagePath,callbackLua}  
-            local sigs = "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V" --传入string参数，无返回值  
-
-            local ok,ret = luaj.callStaticMethod(className,"weixinFenXiangNew",args,sigs)  
-            if not ok then  
-                APP:getCurrentController():hideWaiting()
-                APP:getCurrentController():showAlertOK({desc = "您的版本过低，要使用房间分享功能请升级版本"})
-            end  
-        elseif device.platform == "ios" then
-            local args = {
-                stype = stype,
-                listener = callbackLua,
-                title = title,
-                description = description,
-                webpageUrl = url,
-                imagePath = imagePath,
-            }
-            local ok, ret = luaoc.callStaticMethod("AppController", "sendLinkNew", args)
-            if not ok then
-                APP:getCurrentController():hideWaiting()
-                APP:getCurrentController():showAlertOK({desc = "您的版本过低，要使用房间分享功能请升级版本"})
-            end       
-        end
-    end)}))     
-end
-
-function GameUtils.sendShareImage(stype,imagePath)
-    APP:getCurrentController():showWaiting()
-    APP:getCurrentController():runAction(cca.seq({cca.delay(0.1),cca.cb(function()
-        local callbackLua = function(code) 
-                if code == "1" then
-                    APP:getCurrentController():hideWaiting()
-                elseif code == "2" then
-                    APP:getCurrentController():hideWaiting()       
-                else
-                    APP:getCurrentController():hideWaiting()     
-                end
-            end 
-        if device.platform == "android" then
-            local className="com/zenist/jielong/FacebookSdkO" --包名/类名 
-            local args = {stype, imagePath, callbackLua}  
-            local sigs = "(Ljava/lang/String;Ljava/lang/String;I)V" --传入string参数，无返回值  
-
-            local ok,ret = luaj.callStaticMethod(className,"shareImage",args,sigs)  
-            if not ok then  
-                dump("luaj failed") 
-            end  
-        elseif device.platform == "ios" then
-           
-        end
-    end)}))     
-end
 
 function GameUtils.getParamFromUrl(url,key)
     local keyMap = {}
@@ -532,203 +322,8 @@ function GameUtils.getParamFromUrl(url,key)
     return keyMap[key]
 end
 
-function GameUtils.getFromUrl()
-    local callbackLua = function(url)
-        if url ~= "" then
-            local code = GameUtils.getParamFromUrl(url,"room_code")
-            if code ~= nil then
-                dump(code)
-                APP:getCurrentController():showWaiting()
-                local request = protocols.private_room_pb.EnterPrivateRoomRequest()
-                request.enter_code = code
-                local result = SOCKET_MANAGER.send(protocols.command_pb.CMD_ENTER_PRIVATE_ROOM_REQ, request)
-            end
-
-            -- local uid = GameUtils.getParamFromUrl(url,"user_id")
-            -- if uid ~= nil then
-            --     local GlobalStatus = APP:getObject("GlobalStatus") 
-            --     if GlobalStatus:getInviteUserId() == 0 and GlobalStatus:getIsCanSendInvite() then
-            --         local request = protocols.base_pb.SetUserProfileRequest()
-            --         request.invite_user_id = uid
-            --         SOCKET_MANAGER.send(protocols.command_pb.CMD_SET_USER_PROFILE_REQ, request)  
-            --     end
-            -- end
-        end
-    end 
-    if device.platform == "android" then
-            local className="com/jiyan/liyang/MoWindow" --包名/类名 
-            local args = {callbackLua}  
-            local sigs = "(I)V" --传入string参数，无返回值  
-
-            local ok,ret = luaj.callStaticMethod(className,"getOpenUrl",args,sigs)  
-            if not ok then  
-                dump("luaj failed") 
-            end  
-    elseif device.platform == "ios" then
-        local args = {
-                    listener = callbackLua,
-                }
-        local ok, ret = luaoc.callStaticMethod("AppController", "getOpenUrl", args)
-        if not ok then
-            print(string.format("AppController.getOpenUrl() - call API failure, error code: %s", tostring(ret)))
-        end  
-    end 
-end
-
-function GameUtils.setFromUrl()
-    if device.platform == "android" then
-        local className="com/jiyan/liyang/MoWindow" --包名/类名 
-        local args = {"a"}  
-        local sigs = "(Ljava/lang/String;)V" --传入string参数，无返回值  
-
-        local ok,ret = luaj.callStaticMethod(className,"setOpenUrl",args,sigs)  
-        if not ok then  
-            dump("luaj failed") 
-        end  
-    elseif device.platform == "ios" then
-        local args = {
-                    desc = "",
-                }
-        local ok, ret = luaoc.callStaticMethod("AppController", "setOpenUrl", args)
-        if not ok then
-            print(string.format("AppController.getOpenUrl() - call API failure, error code: %s", tostring(ret)))
-        end  
-    end
-end
-
-function GameUtils.setFromUrlCallback()
-    local callbackLua = function(url) 
-        local GlobalStatus = APP:getObject("GlobalStatus")
-        if GlobalStatus:getIsLogined() then
-            GameUtils.setFromUrl()
-            local code = GameUtils.getParamFromUrl(url,"room_code")
-            if code ~= nil then
-                if APP:isObjectExists("MJLYGameController") then
-                else
-                    dump("setFromUrlCallback:" ..code)
-                    APP:getCurrentController():showWaiting()
-                    local request = protocols.private_room_pb.EnterPrivateRoomRequest()
-                    request.enter_code = code
-                    SOCKET_MANAGER.send(protocols.command_pb.CMD_ENTER_PRIVATE_ROOM_REQ, request)                   
-                end
-            end
-
-            -- local uid = GameUtils.getParamFromUrl(url,"user_id")
-            -- if uid ~= nil then
-            --     local GlobalStatus = APP:getObject("GlobalStatus") 
-            --     if GlobalStatus:getInviteUserId() == 0 and GlobalStatus:getIsCanSendInvite() then
-            --         local request = protocols.base_pb.SetUserProfileRequest()
-            --         request.invite_user_id = uid
-            --         SOCKET_MANAGER.send(protocols.command_pb.CMD_SET_USER_PROFILE_REQ, request)  
-            --     end
-            -- end
-        end
-    end 
-
-    if device.platform == "android" then
-            local className="com/jiyan/liyang/MoWindow" --包名/类名 
-            local args = {callbackLua}  
-            local sigs = "(I)V" --传入string参数，无返回值  
-
-            local ok,ret = luaj.callStaticMethod(className,"setOpenUrlCallback",args,sigs)  
-            if not ok then  
-                dump("luaj failed") 
-            end  
-    elseif device.platform == "ios" then    
-        local args = {
-                    listener = callbackLua,
-                }
-        local ok, ret = luaoc.callStaticMethod("AppController", "setOpenUrlCallback", args)
-        if not ok then
-            print(string.format("AppController.getOpenUrl() - call API failure, error code: %s", tostring(ret)))
-        end  
-    end
-end
-
-function GameUtils.getMoWindowParam(key)
-    if device.platform == "android" then
-        local className="com/jiyan/baotou/MoWindow" --包名/类名 
-        local args = {key}  
-        local sigs = "(Ljava/lang/String;)Ljava/lang/String;" --传入string参数，无返回值  
-
-        local ok,ret = luaj.callStaticMethod(className,"getParams",args,sigs)  
-        if not ok then  
-            dump("luaj failed") 
-        end  
-
-        dump(ret)
-
-        return ret
-    elseif device.platform == "ios" then    
-
-    end  
-
-    return ""  
-end
-function GameUtils.jumpToWeixinGZH()
-    if device.platform == "android" then
-            local className="com/jiyan/liyang/Weixin" --包名/类名 
-            local args = {"乐道溧阳3缺1"}  
-            local sigs = "(Ljava/lang/String;)V" --传入string参数，无返回值  
-
-            local ok,ret = luaj.callStaticMethod(className,"jumpToWeixinGZH",args,sigs)  
-            if not ok then  
-                dump("luaj failed") 
-            end  
-    elseif device.platform == "ios" then    
-        local args = {
-                    gzh = "乐道溧阳3缺1",
-                }
-        local ok, ret = luaoc.callStaticMethod("AppController", "jumpToWeixinGZH", args)
-        if not ok then
-            print(string.format("AppController.getOpenUrl() - call API failure, error code: %s", tostring(ret)))
-        end  
-    end    
-end
-
-function GameUtils.setScreenCallback()
-    local callback = function(code) 
-        dump("--------------------setScreenCallback------------------------")
-        if APP:isObjectExists("SifutouGameController") then
-            local globalStatus = APP:getObject("GlobalStatus")
-            local SifutouGameController = APP:getObject("SifutouGameController")
-            if globalStatus:getWatchingSeatId() == -1 and SifutouGameController._gameSTAT >= 1 then
-                local request = protocols.table_pb.GameScreenShotRequest()
-                SOCKET_MANAGER.send(220, request)                                
-            end
-        end
-    end
-
-    if device.platform == "android" then
-            local className="com/jiyan/liyang/Common" --包名/类名 
-            local args = {callback}  
-            local sigs = "(I)V" --传入string参数，无返回值  
-
-            local ok,ret = luaj.callStaticMethod(className,"setScreenCallBack",args,sigs)  
-            if not ok then  
-                dump("luaj failed") 
-            end  
-    elseif device.platform == "ios" then    
-        local args = {
-                    listener = callback,
-                }
-        local ok, ret = luaoc.callStaticMethod("AppController", "setScreenCallBack", args)
-        if not ok then
-            print(string.format("AppController.setScreenCallBack() - call API failure, error code: %s", tostring(ret)))
-        end  
-    end  
-end
-
 
 ------
-function GameUtils.popNode(node)
-    node:runAction(cca.seq({
-            cca.scaleTo(0.1, 1.05),
-            cca.scaleTo(0.1, 0.95),
-            cca.scaleTo(0.1, 1),
-        }))
-end
-
 function GameUtils.getClockTimeStr(_time)
     local _vM = math.floor(_time/60)
     local _vS = _time-60*math.floor(_time/60)
@@ -740,432 +335,6 @@ function GameUtils.getClockTimeStr(_time)
 end
 
 --------------------------------------------------------------------
-
-function GameUtils.sendCountableEvent(cat, act)
-    if device.platform == "android" then
-        local className="com/zenist/jielong/Ads" 
-        
-
-        local args = {cat, act, "", 1}  
-        local sigs = "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V" --传入string参数，无返回值  
-        
-        local ok,ret = luaj.callStaticMethod(className,"sendCountableEvent",args,sigs)  
-        if not ok then  
-            dump("luaj failed") 
-        end 
-    end
-end
-
---------------------------------------------------------------------
-
-function GameUtils.loadAd()
-    if device.platform == "android" then
-
-        local className="com/zenist/jielong/Ads" 
-        local callbackLua = function(code) 
-
-            if code == "101" then
-                APP:getCurrentController():runAction(cca.seq({
-                    cca.delay(0.1),
-                    cca.cb(function()
-                        local GlobalStatus = APP:getObject("GlobalStatus")
-                        GlobalStatus.adBtn_ = true
-
-                        if APP:isObjectExists("WorldController") then
-                            local _WorldController = APP:getObject("WorldController")
-                            _WorldController:setAdBtnTouch(true)
-                        end
-
-
-                    end),
-                }))
-                
-
-            elseif code == "100" then
-                
-                APP:getCurrentController():runAction(cca.seq({
-                    cca.delay(0.1),
-                    cca.cb(function()
-                        if APP:getCurrentController()._waitingNode then
-                            APP:getCurrentController():hideWaiting()
-                            APP:getCurrentController():showAlertOK({
-                                desc="Sorry, Loading AD Failed",
-                            })
-                        end
-                    end),
-                }))
-                
-            else
-                
-            end
-        end 
-
-        local args = {callbackLua}  
-        local sigs = "(I)V" --传入string参数，无返回值  
-        
-        local ok,ret = luaj.callStaticMethod(className,"loadAd",args,sigs)  
-        if not ok then  
-            dump("luaj failed") 
-        end 
-
-    end
-end
-
-function GameUtils.runAd(adfid)
-    print("------ GameUtils.runAd >", adfid)
-    if adfid == "15004" or adfid == "15005" then
-        APP:getCurrentController():showWaiting()
-    end
-    
-    if device.platform == "android" then
-
-        local className="com/zenist/jielong/Ads" 
-        local callbackLua = function(code) 
-
-            if code == "1" then
-                APP:getCurrentController():hideWaiting()
-                APP:getCurrentController():runAction(cca.seq({
-                    cca.delay(0.1),
-                    cca.cb(function()
-                        local _user = APP:getObject("User")
-                        _user.coin = _user.coin+100
-
-                        if APP:isObjectExists("WorldController") then
-                            local _WorldController = APP:getObject("WorldController")
-                            _WorldController._worldMainView:refreshCoin()
-                        end
-                        if APP:isObjectExists("GameController") then
-                            local _GameController = APP:getObject("GameController")
-                            _GameController._gameBg._coinLable:setString(tostring(_user.coin))
-                        end
-
-
-                    end),
-                }))
-                
-
-            elseif code == "2" then
-                APP:getCurrentController():hideWaiting()
-                APP:getCurrentController():runAction(cca.seq({
-                    cca.delay(0.1),
-                    cca.cb(function()
-                        local _user = APP:getObject("User")
-                        -- _user.tips = 1
-                        -- _user.back = 1
-                        if _user.tips == 0 then
-                            _user.tips = 1
-                            if APP:isObjectExists("GameController") then
-                                local GameController = APP:getObject("GameController")
-                                GameController._gameBottomUINode:tipsOpen()
-                                GameController._gameBottomUINode:refreshTipsLable(_user.tips)
-                            end
-                        end
-
-                        if _user.back == 0 then
-                            _user.back = 1
-                            if APP:isObjectExists("GameController") then
-                                local GameController = APP:getObject("GameController")
-                                GameController._gameBottomUINode:backOpen()
-                                GameController._gameBottomUINode:refreshBackLable(_user.back)
-                            end
-                        end
-
-                        
-                    end),
-                }))
-
-                
-
-                
-
-            elseif code == "100" then
-                
-                APP:getCurrentController():runAction(cca.seq({
-                    cca.delay(0.1),
-                    cca.cb(function()
-                        if APP:getCurrentController()._waitingNode then
-                            APP:getCurrentController():hideWaiting()
-                            APP:getCurrentController():showAlertOK({
-                                desc="Please,try it later.",
-                            })
-                        end
-                    end),
-                }))
-                
-            else
-                APP:getCurrentController():hideWaiting()
-            end
-        end 
-
-        local args = {tostring(adfid),callbackLua}  
-        local sigs = "(Ljava/lang/String;I)V" --传入string参数，无返回值  
-        
-        local ok,ret = luaj.callStaticMethod(className,"buildAd",args,sigs)  
-        if not ok then  
-            dump("luaj failed") 
-        end 
-
-
-        APP:getCurrentController():runAction(cca.seq({
-            cca.delay(30),
-            cca.cb(function()
-                if APP:getCurrentController()._waitingNode then
-                    APP:getCurrentController():hideWaiting()
-                    APP:getCurrentController():showAlertOK({
-                        desc="Please,try it later.",
-                    })
-                end
-            end),
-        }))
-
-    end
-end
-
---------------------------------------------------------------------
-
-function GameUtils.upload(dataJson)
-    local json = require("framework.json")
-    local _user = APP:getObject("User")
-    local _oid = _user.oid
-    local _token = _user.token
-    local body = json.encode({
-        Account = _oid, 
-        Token = _token,
-        Data = tostring(dataJson),
-    })
-
-    -- local _vo = HttpManager.urlMain().."?cmd=upload&data="..tostring(dataJson).."&uid="..tostring(UID)
-    local _vo = HttpManager.urlMain().."set_user",
-    print("curl==> ", _vo)
-    local request = z.CurlManager:getInstance():sendCommandForLua(
-            _vo, 
-            GameConfig.METHOD_POST, body)
-    GameUtils.registerHttpHandler(request, function(response)
-                print("-========================================")
-                print("···response:getCode() ", response:getCode())
-                if response:getCode() == 0 then
-                    local _resp = json.decode(response:getResult())
-                    print("···", response:getResult())
-                    print("_resp  : ", _resp.code)
-                end
-                print("-========================================")
-            end)
-end
-
---------------------------------------------------------------------
-
-function GameUtils.getRank(levelId, friends, callback)
-    local json = require("framework.json")
-    local _user = APP:getObject("User")
-    local _oid = _user.oid
-    local _token = _user.token
-    local body = json.encode({
-        Account = _oid, 
-        Token = _token,
-        level_id = levelId,
-        Friends = friends,--json.encode(friends)
-    })
-
-    -- local _vo = HttpManager.urlMain().."?cmd=rank&fuids="..tostring(_friendsJson).."&uid="..tostring(UID)
-    local _vo = HttpManager.urlMain().."get_rank",
-    print("curl==> ", _vo)
-    local request = z.CurlManager:getInstance():sendCommandForLua(
-            _vo, 
-            GameConfig.METHOD_POST, body)
-    GameUtils.registerHttpHandler(request, function(response)
-                if response:getCode() == 0 then
-
-                    local _resp = json.decode(response:getResult())
-                    print("xxxxx1: ", response:getResult())
-                    print("xxxxx : ", _resp)
-
-                    callback(_resp.data.items)
-                end
-            end)
-end
-
-function GameUtils.setRank(levelId, sec)
-    local json = require("framework.json")
-    local _user = APP:getObject("User")
-    local _oid = _user.oid
-    local _token = _user.token
-    local body = json.encode({
-        Account = _oid, 
-        Token = _token,
-        level_id = levelId,
-        Data = sec,
-    })
-
-    -- local _vo = HttpManager.urlMain().."?cmd=rank&fuids="..tostring(_friendsJson).."&uid="..tostring(UID)
-    local _vo = HttpManager.urlMain().."set_rank",
-    print("curl==> ", _vo)
-    local request = z.CurlManager:getInstance():sendCommandForLua(
-            _vo, 
-            GameConfig.METHOD_POST, body)
-    GameUtils.registerHttpHandler(request, function(response)
-                
-            end)
-
-end
-
---------------------------------------------------------------------
-
-function GameUtils.updateRec()
-    local _user = APP:getObject("User")
-
-    local _dataTable = {}
-    _dataTable.coin = _user.coin
-    _dataTable.rec = _user.rec
-    _dataTable.back = _user.back
-    _dataTable.tips = _user.tips
-    _dataTable.data = _user.data
-
-    local _dataJson = json.encode(_dataTable)
-    print("_dataJson : ", _dataJson)
-    GameUtils.upload(_dataJson)
-
-end
-
---------------------------------------------------------------------
-
-
-function GameUtils.getGameCfg()
-    local _cfg = 
-    {
-        {x=360, y=190, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=450, y=260, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=430, y=380, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=550, y=390, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=650, y=440, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=590, y=500, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=450, y=520, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=520, y=550, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=600, y=600, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=420, y=620, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=370, y=650, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=320, y=680, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=280, y=750, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=230, y=850, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=89, y=890, s1=3600, s2=600, s3=240, gb=100, awd=50},
-        {x=320, y=860, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=350, y=780, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=420, y=730, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=520, y=690, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=480, y=770, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=540, y=800, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=440, y=830, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=600, y=830, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=600, y=900, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=750, y=920, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=890, y=900, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=980, y=890, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=950, y=850, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=920, y=800, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=990, y=830, s1=3600, s2=600, s3=240, gb=200, awd=100},
-        {x=1050, y=820, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1040, y=900, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1100, y=910, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1100, y=870, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1100, y=820, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1160, y=890, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1160, y=830, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1220, y=880, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1220, y=820, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1280, y=900, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1280, y=840, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1250, y=790, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1210, y=730, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1110, y=740, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1050, y=760, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=1000, y=760, s1=3600, s2=600, s3=240, gb=300, awd=150},
-        {x=930, y=730, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=890, y=690, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=870, y=640, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=970, y=640, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1040, y=680, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1140, y=640, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1240, y=680, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1290, y=630, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1230, y=580, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1170, y=560, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1020, y=540, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1070, y=490, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1130, y=460, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1070, y=410, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1140, y=340, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1180, y=390, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1220, y=450, s1=3600, s2=600, s3=240, gb=400, awd=200},
-        {x=1300, y=430, s1=3600, s2=600, s3=240, gb=400, awd=200},
-
-        {x=1320, y=790, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1350, y=730, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1400, y=800, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1400, y=700, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1470, y=600, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1520, y=640, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1550, y=720, s1=3600, s2=600, s3=240, gb=500, awd=250},
-
-        --china
-        {x=1590, y=750, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1630, y=720, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1670, y=710, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1700, y=760, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1660, y=800, s1=3600, s2=600, s3=240, gb=500, awd=250},
-
-        {x=1750, y=790, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1820, y=810, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1800, y=770, s1=3600, s2=600, s3=240, gb=500, awd=250},
-
-        --taiwan
-        {x=1750, y=700, s1=3600, s2=600, s3=240, gb=500, awd=250},
-
-        {x=1690, y=650, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1640, y=640, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1610, y=610, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1670, y=560, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1720, y=590, s1=3600, s2=600, s3=240, gb=500, awd=250},
-        {x=1800, y=640, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=1750, y=520, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=1820, y=550, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=1920, y=570, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=1970, y=540, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=2000, y=490, s1=3600, s2=600, s3=240, gb=600, awd=300},
-
-        {x=2090, y=440, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=2140, y=390, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=2100, y=330, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=2140, y=280, s1=3600, s2=600, s3=240, gb=600, awd=300},
-        {x=2200, y=410, s1=3600, s2=600, s3=240, gb=600, awd=300},
-
-    }
-    return _cfg
-end
-
---------------------------------------------------------------------
-
-function GameUtils.getGameStars(gid, time)
-    local cfgList = GameUtils.getGameCfg()
-    local _timeCfgS1 = cfgList[gid].s1
-    local _timeCfgS2 = cfgList[gid].s2
-    local _timeCfgS3 = cfgList[gid].s3
-
-    print("_time,", time)
-
-    print("_timeCfgS1,", _timeCfgS1)
-    print("_timeCfgS2,", _timeCfgS2)
-    print("_timeCfgS3,", _timeCfgS3)
-
-    if time <= _timeCfgS3 then
-        return 3
-    elseif time <= _timeCfgS2 then
-        return 2
-    elseif time <= _timeCfgS1 then
-        return 1
-    else
-        return 0
-    end
-end
-
 
 
 ------------------------------
@@ -1247,7 +416,7 @@ function GameUtils.formatNumForEnglish(num)
         end  
     end 
 
-    if num > 0 then
+    if num >= 0 then
         return str1
     else
         return "-"..str1
@@ -1255,11 +424,132 @@ function GameUtils.formatNumForEnglish(num)
 end
 
 
+------------------------------
+--取最大值
+---------------------------------
+function GameUtils.getMaxValue(valueList)
+    if #valueList > 0 then
+        local maxOfT = math.max(unpack(valueList))
+        return maxOfT
+    end
+    return 0
+end
+
+
+--------------------------------------
+-- 粒子
+-- --流星
+-- local meteor = cc.ParticleMeteor:createWithTotalParticles(130)
+-- -- meteor:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png"))
+-- meteor:setPosition(cc.p( 250, 200))
+-- meteor:setLocalZOrder(9999)
+-- meteor:setLife(5.0)
+-- self:addChild(meteor)
+
+--  --雨
+-- local rain = cc.ParticleRain:createWithTotalParticles(130)
+-- --  rain:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- rain:setPosition(cc.p( 300, 200))
+-- rain:setLocalZOrder(9999)
+-- rain:setLife(5.0)
+-- self:addChild(rain)
+
+
+-- --雪
+-- local snow = cc.ParticleSnow:createWithTotalParticles(130)
+-- --   snow:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- snow:setPosition(cc.p( 350, 200))
+-- snow:setLocalZOrder(9999)
+-- snow:setLife(5.0)
+-- self:addChild(snow)
+
+
+-- --爆炸
+-- local explosion = cc.ParticleExplosion:createWithTotalParticles(130)
+-- --   explosion:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- explosion:setPosition(cc.p( 350, 200))
+-- explosion:setLocalZOrder(9999)
+-- explosion:setLife(5.0)
+-- self:addChild(explosion)
+
+-- --烟雾
+-- local smoke = cc.ParticleSmoke:createWithTotalParticles(130)
+--  --  smoke:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- smoke:setPosition(cc.p( 350, 200))
+-- smoke:setLocalZOrder(9999)
+-- smoke:setLife(5.0)
+-- self:addChild(smoke)
+
+
+-- --旋涡
+-- local spiral = cc.ParticleSpiral:createWithTotalParticles(130)
+-- --   spiral:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- spiral:setPosition(cc.p( 450, 200))
+-- spiral:setLocalZOrder(9999)
+-- spiral:setLife(5.0)
+-- self:addChild(spiral)
+
+-- local sun = cc.ParticleSun:createWithTotalParticles(130)
+-- -- sun:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- sun:setPosition(cc.p( 500, 200))
+-- sun:setLocalZOrder(9999)
+-- sun:setLife(1.0)
+-- self:addChild(sun)
+
+
+-- local fire = cc.ParticleFire:createWithTotalParticles(130)
+-- --fire:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- fire:setPosition(cc.p( 550, 200))
+-- fire:setLocalZOrder(9999)
+-- fire:setLife(1.0)
+-- self:addChild(fire)
+
+-- local fireworks = cc.ParticleFireworks:createWithTotalParticles(50)
+-- --fireworks:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- fireworks:setPosition(cc.p( 550, 200))
+-- fireworks:setLocalZOrder(9999)
+-- fireworks:setLife(1.0)
+-- self:addChild(fireworks)
+
+-- local galaxy = cc.ParticleGalaxy:createWithTotalParticles(130)
+-- --galaxy:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- galaxy:setPosition(cc.p( 550, 200))
+-- galaxy:setLocalZOrder(9999)
+-- galaxy:setLife(1.0)
+-- self:addChild(galaxy)
+
+--  local flower = cc.ParticleFlower:createWithTotalParticles(130)
+--  --  flower:setTexture(cc.Director:getInstance():getTextureCache():addImage("wsk1.png")) 
+-- flower:setPosition(cc.p( 600, 200))
+-- flower:setLocalZOrder(9999)
+-- flower:setLife(1.0)
+-- self:addChild(flower)
 
 
 
+--------------------------------------
+-- 
+function GameUtils.onePopAndRaiseOutNode(node)
+    local _xyCcp = node:getPosition()
+    node:setScale(0)
+    node:runAction(cca.seq({
+            cca.scaleTo(0.1, 1),
+            cca.moveTo(10, _xyCcp.x, _xyCcp.y+200),
+        }))
+    node:runAction(cca.seq({
+            cca.delay(0.5),
+            cca.fadeOut(2),
+            cca.removeSelf(),
+        }))
+end
 
-
+function GameUtils.popNode(node)
+    node:runAction(cca.seq({
+            cca.scaleTo(0.1, 1.05),
+            cca.scaleTo(0.1, 0.95),
+            cca.scaleTo(0.1, 1),
+        }))
+end
 
 
 

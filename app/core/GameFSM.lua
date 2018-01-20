@@ -103,7 +103,7 @@ function GameFSM:on_A_Start(event, args)
     if M2_DEBUG then
         APP:enterScene("TestScene")
     else
-        APP:enterScene("GameScene")
+        APP:enterScene("RegisterScene")
     end
     
 end

@@ -41,12 +41,39 @@ function TestController:ctor()
     --     self:testB()
     -- end
 
-    local t= {} 
-    local maxOfT = math.max(unpack(t))
-    print( maxOfT );
+    ---
+    --测试背景
+    self:createTestBg()
+
+
+    local emitter = cc.ParticleSystemQuad:create("effect/particle/particle_texture_02.plist")
+    emitter:setPosition(display.cx, display.cy)
+    self:addChild(emitter, 100)
+
+    for i=1,3 do
+
+        local params = 
+        {
+            type = GameMapConfig._TOOLS_LABEL_TYPE[i+1],
+            num = 0*math.pow(10, i),
+            size = 88,
+            isEnglishType = true,
+            color = GameMapConfig._COLOR["Snow"], 
+            borderColor = GameMapConfig._COLOR["Purple1"], 
+            bordWidth = 3,
+            shadowWidth = 4,
+            fontPath = "effect/BRITANIC.TTF"
+        }
+        local _vo = APP:createView("ToolsNumLabelNode",params)
+                :pos(display.cx, display.cy - 100*i)
+                :addTo(self,15)
+
+        _vo:updateNum(params.num+16)
+    end
 
     
     
+
     --]]--------------------------------------------------
 end
 
@@ -272,8 +299,15 @@ end
 ---------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------
+function TestController:createTestBg()
+    display.newRect(cc.rect(0, 0, display.width, display.height),{
+                fillColor = cc.c4f(152/255,245/255,245/255,1), 
+                borderColor = cc.c4f(1,0,0,1), 
+                borderWidth = 1
+            })
+            :addTo(self, 1)
 
-
+end
 
 
 return TestController

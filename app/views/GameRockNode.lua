@@ -5,6 +5,11 @@ local GameRockNode = class("GameRockNode", function()
     return display.newNode()
 end)
 
+local _Zorder_Rock_Touch = 10
+local _Zorder_Rock_Light = 15
+local _Zorder_Rock_Sprite = 20
+local _Zorder_Score = 22
+
 function GameRockNode:ctor(len, color, xid, yid)
 	self._GameController = APP:getObject("GameController")
 	table.insert(self._GameController._rocks, self)
@@ -16,6 +21,8 @@ function GameRockNode:ctor(len, color, xid, yid)
 	self._x = self._GameController._MAP_XY[self._id].x
 	self._y = self._GameController._MAP_XY[self._id].y
 	self._lightNode = nil
+	-- 暂时分数等于len
+	self._score = self._len*10
 
 	self._moveX = 0
 	self._moveY = 0
@@ -29,7 +36,7 @@ function GameRockNode:ctor(len, color, xid, yid)
         cc.rect(1, 1, 1, 1))
         :opacity(0)
         :align(display.BOTTOM_LEFT, self._x, self._y)
-        :addTo(self, 20)
+        :addTo(self, _Zorder_Rock_Touch)
     self._rockSpTouch:setTouchEnabled(true)
     self._rockSpTouch:setTouchSwallowEnabled(true)
     self._rockSpTouch:addNodeEventListener(cc.NODE_TOUCH_EVENT, function(event)
@@ -44,20 +51,20 @@ function GameRockNode:ctor(len, color, xid, yid)
         end)
 
     if M_DEBUG then
-    -- test
+		-- test
 		display.newRect(cc.rect(0, 0, self._width, self._height),{
 				fillColor = GameMapConfig.ROCK_COLOR[self._color], 
 				borderColor = GameMapConfig.ROCK_COLOR_BORDER, 
 				borderWidth = 1
 			})
-			:addTo(self._rockSpTouch, 21)
+			:addTo(self._rockSpTouch, _Zorder_Rock)
 	end
 
 	display.newScale9Sprite("image/game/rock_"..self._color..".png", 0, 0, 
 		cc.size(self._width, self._height), 
 		cc.rect(50, 50, 2, 2))
 		:pos(self._width/2, self._height/2)
-		:addTo(self._rockSpTouch, 21)
+		:addTo(self._rockSpTouch, _Zorder_Rock_Sprite)
 end
 
 function GameRockNode:checkPos()
@@ -259,13 +266,20 @@ function GameRockNode:clean(delay)
 	for i,v in ipairs(self._GameController._rocks) do
 		if v._xid == self._xid and v._yid == self._yid then 
 			table.remove(self._GameController._rocks, i)
-			-- self:removeFromParent()
 			self._rockSpTouch:runAction(cca.seq({
 				cca.delay(delay),
-				cca.scaleTo(0.2, 0),
+				cca.moveTo(0.05, self._x-10, self._y),
+				cca.moveTo(0.05, self._x+10, self._y),
+				cca.moveTo(0.05, self._x-10, self._y),
+				cca.moveTo(0.05, self._x+10, self._y),
+				cca.moveTo(0.05, self._x-10, self._y),
+				cca.moveTo(0.05, self._x+10, self._y),
+				cca.moveTo(0.05, self._x-10, self._y),
+				cca.moveTo(0.05, self._x+10, self._y),
+				cca.hide(),
 			}))
 			self:runAction(cca.seq({
-				cca.delay(delay+0.3),
+				cca.delay(delay+1),
 				cca.removeSelf(),
 			}))
 		end
@@ -273,7 +287,7 @@ function GameRockNode:clean(delay)
 end
 
 
--- 发光
+-- 背景发光
 function GameRockNode:initLightNode(xId, len)
 	if self._lightNode then
 		self._lightNode:removeSelf()
@@ -290,7 +304,7 @@ function GameRockNode:initLightNode(xId, len)
         cc.rect(1, 1, 1, 1))
         :opacity(120)
         :align(display.BOTTOM_LEFT, 0, 0)
-        :addTo(self._rockSpTouch, 20)
+        :addTo(self._rockSpTouch, _Zorder_Rock_Light)
 
     self:setLocalZOrder(GameMapConfig._GameRockNode_Zorder_Min)
 end
@@ -310,6 +324,26 @@ function GameRockNode:removeLightNode()
 	self:setLocalZOrder(GameMapConfig._GameRockNode_Zorder)
 end
 
+
+-- 得分显示
+function GameRockNode:showGetScore()
+    local params = 
+    {
+        type = GameMapConfig._TOOLS_LABEL_TYPE[4],
+        num = "+"..tostring(self._score),
+        size = 50,
+        isEnglishType = true,
+        color = GameMapConfig._COLOR["Snow"], 
+        borderColor = GameMapConfig._COLOR["Purple1"], 
+        bordWidth = 2,
+        shadowWidth = 4,
+        fontPath = "effect/BRITANIC.TTF"
+    }
+    local _scoreVo = APP:createView("ToolsWordLabelNode",params)
+            :pos(self._x+self._width/2, self._y+self._height/2)
+            :addTo(self, _Zorder_Score)
+    GameUtils.onePopAndRaiseOutNode(_scoreVo)
+end
 
 
 

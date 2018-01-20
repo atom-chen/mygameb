@@ -19,6 +19,7 @@ function GameController:ctor()
 	-- print("socket time 1: ", socket.gettime())
 	-- print("socket time 2: ", tostring(socket.gettime()):reverse():sub(1, 6))
     GameController.super.ctor(self)
+    self._SCORE = 0
     self._MAP_XY = {}
     self._MAP_MIN_X = 0
     self._MAP_MIN_Y = 0
@@ -48,6 +49,7 @@ function GameController:ctor()
 
     self:gameStart()
 
+	
 end
 
 function GameController:onEnter()
@@ -86,21 +88,41 @@ end
 
 
 function GameController:gameStart()
-
 	self:autoCreateRocks(1)
 	self:autoCreateRocks(2)
-
 	self:autoCreateRocks(-1)
-
 end
 
 
-function GameController:autoCreateRocks(lineNum)
-	self:autoCreateRocksA({}, lineNum)
+function GameController:autoCreateRocks(lineNum, isFirst)
+	local _cb = function(res)
+					if lineNum == -1 then
+						self._nextRocks = res
+						self._nextView:rest()
+					end
+					local _sid = 1
+					for _,v in ipairs(res) do
+						if v.color > 0 then
+							if lineNum == -1 then
+								self._nextView:addRocks(v.len, _sid)
+							else
+								APP:createView("GameRockNode", v.len, v.color, _sid, lineNum)
+									:addTo(self, GameMapConfig._GameRockNode_Zorder)
+							end
+						end
+						_sid = _sid+v.len
+					end
+				end
+
+	if not isFirst then
+		self:autoCreateRocksA({}, lineNum, _cb)
+	else
+		self:autoCreateRocksB({}, lineNum, _cb)
+	end
 end
 
 
-function GameController:autoCreateRocksA(res, lineNum)
+function GameController:autoCreateRocksA(res, lineNum, callBack)
 	local _delayTime = 0
 	if #res > 0 then
 		_delayTime = 0.1
@@ -108,31 +130,30 @@ function GameController:autoCreateRocksA(res, lineNum)
 	self:runAction(cca.seq({
 		cca.delay(_delayTime),
 		cca.cb(function()
-				local _cb = (function(res)
-								if lineNum == -1 then
-									self._nextRocks = res
-									self._nextView:rest()
-								end
-								local _sid = 1
-								for _,v in ipairs(res) do
-									if v.color > 0 then
-										if lineNum == -1 then
-											self._nextView:addRocks(v.len, _sid)
-										else
-											APP:createView("GameRockNode", v.len, v.color, _sid, lineNum)
-												:addTo(self, GameMapConfig._GameRockNode_Zorder)
-										end
-									end
-									_sid = _sid+v.len
-								end
-
-							end)
-				
-				GameRocksLogic.autoCreateRocksTypeB(res, _cb)
+				GameRocksLogic.autoCreateRocksTypeB(res, callBack)
 		end),
 	}))
 end
 
+
+function GameController:autoCreateRocksB(res, lineNum, callBack)
+	local _delayTime = 0
+	if #res > 0 then
+		_delayTime = 0.1
+	end
+	local presetType = ""
+	if lineNum == 2 then
+		presetType = "_0_0000_"
+	elseif lineNum == 1 then
+		presetType = "_0000000"
+	end
+	self:runAction(cca.seq({
+		cca.delay(_delayTime),
+		cca.cb(function()
+				GameRocksLogic.autoCreateRocksTypeB(res, callBack, presetType)
+		end),
+	}))
+end
 
 
 function GameController:roundOver()
@@ -152,7 +173,6 @@ function GameController:roundOver()
 							elseif _nextState == "up" then
 								self:gotoUp(self._cleanTimes+1)
 							elseif _nextState == "done" then
-								-- self:gotoDown()
 								self._fsmOP = true
 								self._fsm:doEvent("done")
 								self._MOVE_LOCK = false
@@ -187,9 +207,7 @@ end
 
 function GameController:gotoClean()
 	self:checkClean()
-	
 	local delayTime = self._cleanTimes*GameMapConfig.CLEAN_DELAY
-	
 	if delayTime > 0 then
 		delayTime = delayTime+0.1
 	end
@@ -267,7 +285,7 @@ function GameController:checkDown(_moveList, _res)
 	end
 
 	if not _moved then
-		_res._times = math.max(unpack(_moveList))
+		_res._times = GameUtils.getMaxValue(_moveList)
 		return 0
 	else
 		self:checkDown(_moveList, _res)
@@ -308,11 +326,20 @@ function GameController:checkClean()
 
 		-- clean
 		if _canClean then
-			
+			local _getScore = 0
 			for _,v in ipairs(_compList) do
+				----------------
+				--calc score
+				----------------
+				_getScore = _getScore + v._score
+				v:showGetScore()
 				v:clean(self._cleanTimes*GameMapConfig.CLEAN_DELAY)
 			end
 			self._cleanTimes = self._cleanTimes+1
+
+			-- view score
+			self._SCORE = self._SCORE+_getScore
+			self._bgView:setScore(self._SCORE)
 		end
 	end
 	return 

@@ -112,7 +112,7 @@ end
 ------------------------------------------
 -- 方式二
 ------------------------------------------
-function GameRocksLogic.autoCreateRocksTypeB(res, callback)
+function GameRocksLogic.autoCreateRocksTypeB(res, callback, presetType)
 	rand_seed()
 	-- rand empty
 	
@@ -163,7 +163,7 @@ function GameRocksLogic.autoCreateRocksTypeB(res, callback)
 	}
 
 	local _randA = math.random(1, #__TypeList)
-	local _styleType = __TypeList[_randA]
+	local _styleType = presetType or __TypeList[_randA]
 
 
 	local _v1, _v2 = {}, {}

@@ -33,6 +33,7 @@ function StartCommand.execute(...)
     StartCommand.initEnv()
     StartCommand.initHttp()
     StartCommand.initPay()
+    StartCommand.initGCUser()
     StartCommand.initScriptBridges()
     StartCommand.asyncLoadResources()
 
@@ -98,6 +99,11 @@ end
 function StartCommand.initPay()
     local PayManager = require("app.core.PayManager")
     PayManager.init()
+end
+
+function StartCommand.initGCUser()
+    local GCUser = require("app.core.UserManager")
+    GCUser.init()
 end
 
 function StartCommand.initScriptBridges()
