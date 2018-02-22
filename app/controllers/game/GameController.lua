@@ -47,9 +47,9 @@ function GameController:ctor()
     self._fsm = GameOneFSM.new()
 
 
-    self:gameStart()
+    -- self:gameStart()
 
-	
+    
 end
 
 function GameController:onEnter()

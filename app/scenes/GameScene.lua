@@ -1,5 +1,5 @@
 
-local GameController = require("app.controllers.GameController")
+local GameController = require("app.controllers.Game.GameController")
 
 local GameScene = class("GameScene", function()
     -- return display.newPhysicsScene("GameScene")

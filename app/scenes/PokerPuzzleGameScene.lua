@@ -1,5 +1,5 @@
 
-local AddPuzzleGameController = require("app.controllers.AddPuzzleGame.AddPuzzleGameController")
+local PokerPuzzleGameController = require("app.controllers.PokerPuzzleGame.PokerPuzzleGameController")
 
 local AddPuzzleGameScene = class("AddPuzzleGameScene", function()
     -- return display.newPhysicsScene("AddPuzzleGameScene")
@@ -8,7 +8,7 @@ end)
 
 function AddPuzzleGameScene:ctor()
 	-- local _world = self:getPhysicsWorld()
-    self:addChild(AddPuzzleGameController.new())
+    self:addChild(PokerPuzzleGameController.new())
 end
 
 function AddPuzzleGameScene:onEnter()

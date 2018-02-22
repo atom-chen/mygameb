@@ -5,37 +5,47 @@ local User = class("User")
 
 function User:ctor()
     self.user_id = GameConfig.INVALID_ID
-    self.name = ""
-    self.avatar = ""
-    self.signature = ""
-    self.gender = 0
-    self.coin = 0
-    self.diamond = 0
-    self.vip_level = 0
-    self.vip_exp = 0
-    self.voice_index = 1 
-    self.token = ""
-    self.oid = ""
-
-    self.rec = 0
-    self.back = 0
-    self.tips = 0
+    self.nickname = ""
+    
+    -- data
     self.data = {}
+    self._checkDatakeyValue = 
+    {
+        Coin = 0,
+        GuankaId = 0,
+    }
 end
 
-function User:loadByPBBaseUser(pbBaseUser)
-    self.user_id = pbBaseUser.user_id
-    self.name = pbBaseUser.name
-    self.avatar = pbBaseUser.avatar
-    self.signature = pbBaseUser.signature
-    self.gender = pbBaseUser.gender
-    self.coin = pbBaseUser.coin
-    self.diamond = pbBaseUser.diamond
-    self.vip_level = pbBaseUser.vip_level
+function User:setNickName(nickname)
+    self.nickname = nickname
+end
 
-    if self.avatar == "" then
-        self.avatar = "1"
+function User:getInitData()
+    local _data = {}
+    return _data
+end
+
+function User:fixData(data)
+    for checkKey, checkValue in pairs(self._checkDatakeyValue) do
+        local _haveCheckKey = false
+        for k,v in pairs(data) do
+            if k == checkKey then
+                _haveCheckKey = true
+            end
+        end
+        if not _haveCheckKey then
+            data[checkKey] = checkValue
+        end
     end
+    return data
+end
+
+function User:loadData(data)
+    self.data = data
+end
+
+function User:getData()
+    return self.data
 end
 
 return User

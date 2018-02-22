@@ -30,7 +30,7 @@ function ToolsNumLabelNode:getNumString(num)
 end
 
 
-function ToolsNumLabelNode:updateNum(num)
+function ToolsNumLabelNode:updateNum(num, withAnim)
 	local _oldNum = self._num
 	local _newNum = num
 
@@ -38,25 +38,32 @@ function ToolsNumLabelNode:updateNum(num)
 	local _dx = _disNum/80
 	local _otAction = nil
 	local _index = 1
-	_otAction = self:runAction(cca.repeatForever(cca.seq({
-				cca.delay(0.01),
-				cca.cb(function()
-						local _tempNum = math.floor(_oldNum + _dx*_index)
-						self._text = self:getNumString(_tempNum)
-						self:refreshString()
-						_index = _index+1
-					end),
-				})))
 
-	self:runAction(cca.seq({
-			cca.delay(0.8),
-			cca.cb(function() 
-						self._num = num
-						self._text = self:getNumString(self._num)
-						self:refreshString()
-						self:stopAction(_otAction)
-					end),
-		}))
+	if withAnim then
+		_otAction = self:runAction(cca.repeatForever(cca.seq({
+					cca.delay(0.01),
+					cca.cb(function()
+							local _tempNum = math.floor(_oldNum + _dx*_index)
+							self._text = self:getNumString(_tempNum)
+							self:refreshString()
+							_index = _index+1
+						end),
+					})))
+
+		self:runAction(cca.seq({
+				cca.delay(0.8),
+				cca.cb(function() 
+							self._num = num
+							self._text = self:getNumString(self._num)
+							self:refreshString()
+							self:stopAction(_otAction)
+						end),
+			}))
+	else
+		self._num = num
+		self._text = self:getNumString(self._num)
+		self:refreshString()
+	end
 end
 
 

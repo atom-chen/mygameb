@@ -1,12 +1,12 @@
 local GameConfig = require("app.core.GameConfig")
-local GameMapConfig = require("app.core.Game.AddPuzzleGameConfig")
+local GameMapConfig = require("app.core.Game.PokerPuzzleGameConfig")
 
 local GameMapNode = class("GameMapNode", function()
     return display.newNode()
 end)
 
 function GameMapNode:ctor(mapCfg)
-	self._GameController = APP:getObject("AddPuzzleGameController")
+	self._GameController = APP:getObject("PokerPuzzleGameController")
 
 	local __allW = (GameMapConfig.ROCK_WIDTH+GameMapConfig.ROCK_D)*(GameMapConfig.ROCK_X-1)
 	local __allH = (GameMapConfig.ROCK_HEIGHT+GameMapConfig.ROCK_D)*(GameMapConfig.ROCK_Y-1)
@@ -52,7 +52,7 @@ function GameMapNode:ctor(mapCfg)
 					:align(display.CENTER, _x, _y)
 					:addTo(self,2)
 				temp:setColor(GameConfig._COLOR["Snow"])
-				temp:setOpacity(30)
+				temp:setOpacity(130)
 				-- tempB:setOpacity(30)
 			end
 

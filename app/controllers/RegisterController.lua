@@ -9,6 +9,7 @@ local GameUtils = require("app.core.GameUtils")
 local HttpManager = require("app.core.HttpManager")
 local scheduler = require("framework.scheduler")
 local SocketManager = require("app.core.SocketManager")
+local UserManager = require("app.core.UserManager")
 
 local RegiseterController = class("RegiseterController", ControllerBase)
 
@@ -17,8 +18,7 @@ function RegiseterController:ctor()
     -- print("--------------w ", display.width)
     -- print("--------------h ", display.height)
 
-    -- local GlobalStatus = APP:getObject("GlobalStatus")
-    -- local localDataManager = z.LocalDataManager:getInstance()
+    
 
     -- local account = localDataManager:getStringForKey(GameConfig.LocalData_Account)
     -- local password = localDataManager:getStringForKey(GameConfig.LocalData_Password)
@@ -26,18 +26,57 @@ function RegiseterController:ctor()
     -- local refreshToken = localDataManager:getStringForKey(GameConfig.LocalData_WEI_XIN_REFRESH_TOKEN)
     -- local refreshDate = localDataManager:getStringForKey(GameConfig.LocalData_WEI_XIN_REFRESH_TIME)
 
+    self:showWaiting()
     if device.platform == "mac" then
-        self:runAction(cca.seq({
-                cca.delay(0.1),
-                cca.cb(function()
-                        -- APP:enterScene("GameScene")
-                        APP:enterScene("AddPuzzleGameScene")
-                    end),
-            }))
+        -- self:runAction(cca.seq({
+        --         cca.delay(0.1),
+        --         cca.cb(function()
+        --                 APP:enterScene("GameScene")
+        --                 -- APP:enterScene("AddPuzzleGameScene")
+        --                 -- APP:enterScene("PokerPuzzleGameScene")
+        --             end),
+        --     }))
+        local user = APP:getObject("User")
+        user:setNickName("xx2")
+        local data = user:fixData({})
+        user:loadData(data)
+
+        self:userLogin()
+
     elseif device.platform == "ios" then
-        self:showWaiting()
-        z.IOSManager:getInstance():GameCenterLogin();
+        UserManager.GCLogin()
+        
+
+    elseif device.platform == "android" then
+        local localDataManager = z.LocalDataManager:getInstance()
+        if localDataManager:getIntegerForKey(GameConfig.LocalData_AppEverOpened) == 0 then
+            -- 全局初始化
+            local localDataManager = z.LocalDataManager:getInstance()
+            localDataManager:setIntegerForKey(GameConfig.LocalData_AppEverOpened, 1)
+            localDataManager:setIntegerForKey(GameConfig.LocalData_SaveAccount, 1)
+            localDataManager:flush()
+
+        end
+
+
     end
+
+    -- local btnImage = 
+    -- {
+    --     normal = "image/ui/lobby_button_ranking.png",
+    --     pressed = "image/ui/lobby_button_ranking.png",
+    --     disabled = "image/ui/lobby_button_ranking.png"
+    -- }
+    -- self._btnRank = cc.ui.UIPushButton.new(btnImage)
+    --     :onButtonPressed(function(event) event.target:scale(1.1) end)
+    --     :onButtonRelease(function(event) event.target:scale(1) end)
+    --     :onButtonClicked(function()
+            
+    --         z.FBSDKManager:getInstance():FackBookLogin()
+            
+    --     end)
+    --     :align(display.CENTER, display.cx, 110)
+    --     :addTo(self, 1)
 
 --[[--
 ------------------------------------------------------------------------------------------------
@@ -189,25 +228,22 @@ function RegiseterController:onEnter()
 	RegiseterController.super.onEnter(self)
 	--SocketManager.unblockMessage()
 
-	local localDataManager = z.LocalDataManager:getInstance()
-    if localDataManager:getIntegerForKey(GameConfig.LocalData_AppEverOpened) == 0 then
-        -- 全局初始化
-        local localDataManager = z.LocalDataManager:getInstance()
-        localDataManager:setIntegerForKey(GameConfig.LocalData_AppEverOpened, 1)
-        localDataManager:setIntegerForKey(GameConfig.LocalData_SaveAccount, 1)
-        localDataManager:flush()
-
-    end
+	
 
     -- APP:createView("RegisterView")
     --     :addTo(self)
 end
 
 function RegiseterController:onExit()
-    print("···RegiseterController:onExit")
     RegiseterController.super.onExit(self)
 end
 
+
+function RegiseterController:userLogin()
+    self:hideWaiting()
+
+
+end
 
 
 

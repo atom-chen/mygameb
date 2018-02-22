@@ -29,12 +29,12 @@ function WaitingNode:ctor(options)
 
     if not blank then
         
-        -- local jh = display.newSprite("image/com_loading_3.png")
-        --     :align(display.CENTER, 0, 0)
-        --     :addTo(self,11)
-        -- jh:runAction(cca.repeatForever(cca.seq({
-        --         cca.rotateBy(1, 360)
-        --     })))
+        local jh = display.newSprite("image/game/bg_3.png")
+            :align(display.CENTER, 0, 0)
+            :addTo(self,11)
+        jh:runAction(cca.repeatForever(cca.seq({
+                cca.rotateBy(1, 360)
+            })))
     end
 end
 

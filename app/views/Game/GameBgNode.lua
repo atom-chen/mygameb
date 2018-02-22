@@ -97,7 +97,7 @@ end
 
 
 function GameBgNode:setScore(score)
-	self._scoreLabel:updateNum(score)
+	self._scoreLabel:updateNum(score, true)
 end
 
 

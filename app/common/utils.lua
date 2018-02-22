@@ -111,6 +111,28 @@ function utils.removeItem(list, item, removeAll)
     return rmCount
 end
 
+
+-- 删除table中的元素 key value 
+function utils.removeElementByKey(tbl,key)  
+    local tmp ={}    
+    for i in pairs(tbl) do  
+        table.insert(tmp,i)  
+    end  
+  
+    local newTbl = {}  
+    local i = 1  
+    while i <= #tmp do  
+        local val = tmp [i]  
+        if val == key then   
+            table.remove(tmp,i)  
+         else  
+            newTbl[val] = tbl[val]  
+            i = i + 1  
+         end  
+     end  
+    return newTbl  
+end  
+
 function utils.threeParamCalc(cond, a, b)
     return (cond and {a} or {b})[1]
 end
@@ -309,6 +331,32 @@ function utils.date(timestamp)
     local month = tonumber(os.date("%m", time))
     local day = tonumber(os.date("%d", time))
     return year, month, day
+end
+
+-- 打乱table
+function utils.shuffle(t)
+    if type(t)~="table" then
+        return
+    end
+    local l=#t
+    local tab={}
+    local index=1
+    while #t~=0 do
+        local n=math.random(0,#t)
+        if t[n]~=nil then
+            tab[index]=t[n]
+            table.remove(t,n)
+            index=index+1
+        end
+    end
+    return tab
+end
+
+--c3b 转成 c4f
+function utils.c3bToc4f(c3b, opacity)
+    local _op = opacity or 1
+    -- cc.c3b(r,g,b) = cc.4f(r/255,g/255,b/255,透明度)
+    return cc.c4f(c3b.r/255,c3b.g/255,c3b.b/255,opacity)
 end
 
 return utils

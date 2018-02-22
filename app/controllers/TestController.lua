@@ -68,13 +68,29 @@ function TestController:ctor()
                 :pos(display.cx, display.cy - 100*i)
                 :addTo(self,15)
 
-        _vo:updateNum(params.num+16)
+        _vo:updateNum(params.num+16, true)
     end
 
     
     
 
     --]]--------------------------------------------------
+
+    local json = require("framework.json")
+    local _a = json.encode({
+        user_type = 1, 
+        account = "options.account",
+        password = "(*@638&8I*H@s2)",
+    })
+
+    -- local _a = "gerry goo 1986@123"
+    local _b = GameUtils.encodeBase64(_a)
+    print("----------base 64 test")
+    print(_b)
+    local _c = GameUtils.decodeBase64(_b)    
+    print(_c)
+    local _d = json.decode(_c)
+    dump(_d)
 end
 
 function TestController:onEnter()
